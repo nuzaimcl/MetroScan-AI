@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metro-Scan AI | Legal Metrology Compliance Auditor</title>
+    <!-- Imports Tailwind CSS for zero-setup modern styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Imports Google Fonts: Space Grotesk (Headers) & Inter (Body) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, .brand-font { font-family: 'Space Grotesk', sans-serif; }
+    </style>
+</head>
+<body class="bg-white text-black antialiased selection:bg-black selection:text-white">
+
+    <!-- Navigation Bar -->
+    <nav class="flex justify-between items-center py-6 px-8 border-b border-gray-200 sticky top-0 bg-white/80 backdrop-blur-md z-50">
+        <div class="brand-font text-2xl font-bold tracking-tighter">METRO-SCAN.</div>
+        <div class="hidden md:flex space-x-8 text-sm font-semibold text-gray-500">
+            <a href="#features" class="smooth-scroll hover:text-black transition">Features</a>
+            <a href="#how-it-works" class="smooth-scroll hover:text-black transition">How it Works</a>
+        </div>
+        <a href="#scanner" class="smooth-scroll bg-black text-white px-5 py-2 rounded-full text-sm font-semibold hover:bg-zinc-800 hover:scale-105 active:scale-95 transition-all duration-200 shadow-lg">Launch Scanner</a>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="flex flex-col items-center justify-center text-center py-32 px-4 bg-black text-white">
+        <h1 class="text-5xl md:text-7xl font-bold max-w-4xl leading-tight mb-6 tracking-tight">
+            Compliance, <span class="text-gray-400">Automated.</span>
+        </h1>
+        <p class="text-lg md:text-xl text-gray-400 max-w-2xl mb-10 font-light">
+            Scan packaging labels instantly with AI-powered OCR. Zero manual data entry. Total legal accuracy under Indian Legal Metrology rules.
+        </p>
+        <div class="flex space-x-4">
+            <a href="#scanner" class="smooth-scroll bg-white text-black px-8 py-3 rounded-full font-semibold hover:bg-gray-200 hover:scale-105 active:scale-95 transition-all duration-200">Start Scanning</a>
+            <a href="#" class="border border-gray-600 text-white px-8 py-3 rounded-full font-semibold hover:bg-zinc-900 hover:border-white hover:scale-105 active:scale-95 transition-all duration-200">View GitHub</a>
+        </div>
+    </header>
+
+    <!-- Features Section -->
+    <section id="features" class="py-24 px-8 max-w-7xl mx-auto">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold tracking-tight mb-3">Engineered for Precision</h2>
+            <p class="text-gray-500 text-sm md:text-base">Built to tackle the core challenges of regulatory packaging audits.</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="p-8 bg-gray-50 border border-gray-200 hover:border-black transition duration-300">
+                <h3 class="text-xl font-bold mb-3">Smart Image Validation</h3>
+                <p class="text-gray-600 leading-relaxed text-sm">Automatically detects blurriness or poor lighting, prompting users to upload a clear, legible photo before analysis.</p>
+            </div>
+            <div class="p-8 bg-gray-50 border border-gray-200 hover:border-black transition duration-300">
+                <h3 class="text-xl font-bold mb-3">7 Mandatory Checks</h3>
+                <p class="text-gray-600 leading-relaxed text-sm">Cross-checks MRP, manufacturer details, dates, net weight, and more directly against Legal Metrology guidelines.</p>
+            </div>
+            <div class="p-8 bg-black text-white shadow-2xl hover:bg-zinc-900 hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 cursor-pointer">
+                <h3 class="text-xl font-bold mb-3">Live Camera & Upload</h3>
+                <p class="text-gray-400 leading-relaxed text-sm">Seamlessly switch between uploading saved packaging images or snapping live photos on-demand.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- How it Works Section -->
+    <section id="how-it-works" class="py-24 px-8 bg-gray-50 border-y border-gray-200">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold tracking-tight mb-3">How Metro-Scan Works</h2>
+                <p class="text-gray-500 text-sm md:text-base">Three simple steps from physical packaging to live audit dashboard.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white p-8 border border-gray-200 relative">
+                    <span class="text-4xl font-extrabold text-gray-200 absolute top-4 right-6">01</span>
+                    <h3 class="text-lg font-bold mb-2">Upload or Snap Photo</h3>
+                    <p class="text-gray-600 text-sm">Upload an image file or open the on-demand camera to capture a well-lit picture of the label.</p>
+                </div>
+                <div class="bg-white p-8 border border-gray-200 relative">
+                    <span class="text-4xl font-extrabold text-gray-200 absolute top-4 right-6">02</span>
+                    <h3 class="text-lg font-bold mb-2">Clarity Verification</h3>
+                    <p class="text-gray-600 text-sm">Gemini AI checks image quality. If blurry or unreadable, it requests a new photo immediately.</p>
+                </div>
+                <div class="bg-white p-8 border border-gray-200 relative">
+                    <span class="text-4xl font-extrabold text-gray-200 absolute top-4 right-6">03</span>
+                    <h3 class="text-lg font-bold mb-2">Red/Green Dashboard</h3>
+                    <p class="text-gray-600 text-sm">Get an instant, structured compliance report highlighting passed and failed mandatory declarations.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Embedded Scanner Section -->
+    <section id="scanner" class="w-full max-w-5xl mx-auto py-16 px-4">
+        <div class="text-center mb-8">
+            <h2 class="text-3xl font-bold tracking-tight">Interactive Scanner Module</h2>
+            <p class="text-gray-500 text-sm mt-1">Test live regulatory detection below.</p>
+        </div>
+        <div class="border-4 border-black rounded-xl overflow-hidden shadow-2xl bg-white h-[800px] relative">
+            <iframe
+                src="https://metroscan-ai.streamlit.app/?embed=true" 
+                class="w-full h-full border-none"
+                allow="camera; microphone; fullscreen"
+                title="Metro-Scan AI Scanner">
+            </iframe>
+        </div>
+    </section>
+
+    <!-- Simple Footer -->
+    <footer class="text-center py-12 border-t border-gray-200 text-sm text-gray-400 font-medium">
+        &copy; 2026 Metro-Scan AI. Built for Smart India Hackathon.
+    </footer>
+
+    <!-- Smooth Scroll Script -->
+    <script>
+        document.querySelectorAll('.smooth-scroll').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
