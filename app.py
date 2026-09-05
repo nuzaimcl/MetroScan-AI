@@ -1,6 +1,6 @@
 import os
 import streamlit as st
-from google import genai
+import google.generativeai as genai
 from PIL import Image
 
 st.set_page_config(
@@ -10,19 +10,17 @@ st.set_page_config(
 st.title("MetroScan-AI 🚇")
 st.write("AI-powered analysis tool initialized and ready.")
 
-# Securely fetch the API key from Streamlit Cloud Secrets
 api_key = st.secrets.get("GEMINI_API_KEY")
 
 if not api_key:
   st.error(
-      "API Key not found! Please add your GEMINI_API_KEY under Streamlit Cloud"
-      " -> App Settings -> Secrets."
+      "API Key not found! Please add your GEMINI_API_KEY under Streamlit"
+      " Cloud -> App Settings -> Secrets."
   )
 else:
-  # Initialize the modern Google GenAI client
-  client = genai.Client(api_key=api_key)
+  genai.configure(api_key=api_key)
+  model = genai.GenerativeModel("gemini-2.5-flash")
 
-  # Example file/camera input for your scan features
   uploaded_file = st.file_uploader(
       "Upload or capture an image for scanning...",
       type=["jpg", "jpeg", "png"],
@@ -35,14 +33,10 @@ else:
     if st.button("Run Analysis"):
       with st.spinner("Analyzing with Gemini..."):
         try:
-          # Example call using the new SDK client format
-          response = client.models.generate_content(
-              model="gemini-2.5-flash",
-              contents=[
-                  image,
-                  "Analyze this image for MetroScan-AI and provide details.",
-              ],
-          )
+          response = model.generate_content([
+              image,
+              "Analyze this image for MetroScan-AI and provide details.",
+          ])
           st.success("Analysis Complete!")
           st.write(response.text)
         except Exception as e:
