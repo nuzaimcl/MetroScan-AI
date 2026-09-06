@@ -72,7 +72,7 @@ if uploaded_image is not None:
 
       try:
         response = client.models.generate_content(
-            model="gemini-3.6-flash", contents=[uploaded_image, prompt]
+            model="gemini-3.7-flash", contents=[uploaded_image, prompt]
         )
         st.success("Inspection Complete!")
         st.markdown("---")
