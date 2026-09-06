@@ -34,9 +34,14 @@ else:
       with st.spinner("Analyzing with Gemini..."):
         try:
           response = model.generate_content([
-              image,
-              "Analyze this image for MetroScan-AI and provide details.",
-          ])
+                image,
+                (
+                    "Perform a comprehensive inspection of this packaging design. Provide a"
+                    " detailed breakdown covering the general overview, main front panel,"
+                    " left information panel, right information panel, and color"
+                    " palette/aesthetics."
+                ),
+            ])
           st.success("Analysis Complete!")
           st.write(response.text)
         except Exception as e:
