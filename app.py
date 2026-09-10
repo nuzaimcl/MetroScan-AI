@@ -51,6 +51,7 @@ if uploaded_images and st.button("Run Compliance Audit"):
           temperature=0.1,
           max_tokens=800,
       )
+        
       raw_output = completion.choices[0].message.content
       if "</think>" in raw_output:
         final_output = raw_output.split("</think>")[-1].strip()
