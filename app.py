@@ -2,6 +2,17 @@ import base64
 from groq import Groq
 import streamlit as st
 
+st.markdown(
+    """
+    <style>
+    [data-testid="stHeaderActionElements"] {
+        display: none;
+    }
+    </style>
+""",
+    unsafe_allow_html=True,
+)
+
 client = Groq(api_key=st.secrets["GROQ_API_KEY"])
 
 st.title("Metro-Scan AI | Compliance Auditor")
