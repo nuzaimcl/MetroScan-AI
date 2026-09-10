@@ -107,14 +107,14 @@ if uploaded_images and st.button("Run Compliance Audit"):
 
       raw_output = completion.choices[0].message.content
 
-      # Clean out thinking blocks cleanly using regex
-      final_output = re.sub(
-          r"<think>.*?</think>", "", raw_output, flags=re.DOTALL
-      ).strip()
-
-      # Fallback if the tag wasn't closed due to truncation
-      if not final_output and "<think>" in raw_output:
-        final_output = raw_output.split("<think>")[-1].strip()
+      # Handle both closed and unclosed/truncated think blocks
+      if "</think>" in raw_output:
+        final_output = raw_output.split("</think>")[-1].strip()
+      elif "<think>" in raw_output:
+        # If the think tag was never closed due to token limits, strip the tag and use the text anyway
+        final_output = raw_output.replace("<think>", "").strip()
+      else:
+        final_output = raw_output
 
       st.success("Audit Complete!")
       st.markdown("---")
