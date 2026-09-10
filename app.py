@@ -1,86 +1,52 @@
-import asyncio
-import os
-import sys
-
-if sys.platform == "win32":
-  asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
-
-from PIL import Image
-from google import genai
+import base64
+from groq import Groq
 import streamlit as st
 
-st.set_page_config(
-    page_title="MetroScan-AI Auditor", page_icon="🔍", layout="centered"
+# Initialize the Groq client using Streamlit secrets
+client = Groq(api_key=st.secrets["GROQ_API_KEY"])
+
+st.title("Metro-Scan AI (Powered by Groq)")
+
+# 1. Allow multiple image uploads
+uploaded_images = st.file_uploader(
+    "Upload product label photos (Front, Back, MRP panel, etc.)",
+    type=["jpg", "jpeg", "png"],
+    accept_multiple_files=True,
 )
 
-# Load API Key securely from Streamlit Cloud Secrets
-api_key = None
-try:
-  api_key = st.secrets["GEMINI_API_KEY"]
-except Exception:
-  api_key = os.environ.get("GEMINI_API_KEY")
-
-if not api_key:
-  st.error("GEMINI_API_KEY not configured in deployment secrets.")
-  st.stop()
-
-client = genai.Client(api_key=api_key)
-
-st.title("🔍 MetroScan-AI Scanner")
-st.markdown("Scan packaging labels instantly with AI-powered OCR.")
-
-# Give users a choice: Upload a file OR take a live photo
-input_method = st.radio(
-    "Choose input method:", ["Upload Image File", "Take Live Photo"]
+prompt = st.text_area(
+    "Analysis Prompt",
+    "Check these product images against Legal Metrology packaging rules (7"
+    " mandatory declarations).",
 )
 
-uploaded_image = None
+if uploaded_images and st.button("Run Compliance Audit"):
+  with st.spinner(
+      "Analyzing multiple angles with ultra-fast Groq inference..."
+  ):
+    # Build the message payload array
+    content_payload = [{"type": "text", "text": prompt}]
 
-if input_method == "Upload Image File":
-  uploaded_file = st.file_uploader(
-      "Choose Packaging Image (JPG, PNG)", type=["jpg", "jpeg", "png"]
-  )
-  if uploaded_file is not None:
-    uploaded_image = Image.open(uploaded_file)
-else:
-  camera_file = st.camera_input("Take a picture of the packaging label")
-  if camera_file is not None:
-    uploaded_image = Image.open(camera_file)
+    # Loop through each uploaded image, encode to base64, and add to payload
+    for img in uploaded_images:
+      bytes_data = img.getvalue()
+      base64_image = base64.b64encode(bytes_data).decode("utf-8")
+      content_payload.append({
+          "type": "image_url",
+          "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"},
+      })
 
-if uploaded_image is not None:
-  st.image(uploaded_image, caption="Selected Scan", use_container_width=True)
-
-  if st.button("Run Compliance Analysis", type="primary"):
-    with st.spinner("Analyzing Legal Metrology compliance declarations..."):
-      prompt = (
-          "Analyze this packaging image strictly based on Legal Metrology "
-          "(Packaged Commodities) Rules. Evaluate the following 7 mandatory declarations:\n"
-          "1. Name and address of the manufacturer/packer/importer\n"
-          "2. Common or generic name of the commodity\n"
-          "3. Net quantity\n"
-          "4. Month and year of packing/manufacturing/import\n"
-          "5. Retail Sale Price (MRP inclusive of all taxes)\n"
-          "6. Consumer care/grievance details\n"
-          "7. Country of origin (if imported) or statutory safety/declaration standards\n\n"
-          "Structure your output strictly using these sections:\n"
-          "- **Compliance Score**: [X] out of 7 items are approved.\n"
-          "- **Approved Elements**: List compliant declarations found.\n"
-          "- **Non-Approved Elements**: List missing or defective elements, and for every "
-          "non-approved item, you MUST include the specific Legal Metrology rule/section violation in brackets (e.g., [Rule 6(1) of LM PC Rules]).\n"
-          "- **Final Product Verdict**: State clearly whether the product is 'APPROVED' or 'NOT APPROVED' for market distribution."
+    try:
+      # Call Groq's high-speed vision model
+      completion = client.chat.completions.create(
+          model="qwen/qwen3.6-27b",  # Groq's robust vision model
+          messages=[{"role": "user", "content": content_payload}],
+          temperature=0.1,
       )
 
-      try:
-        response = client.models.generate_content(
-            model="gemini-3.7-flash", contents=[uploaded_image, prompt]
-        )
-        st.success("Inspection Complete!")
-        st.markdown("---")
-        st.markdown(response.text)
-      except Exception as e:
-        st.error(f"An error occurred during analysis: {e}")
-else:
-  st.info(
-      "Upload an image file or take a live photo above to start the automated"
-      " audit."
-  )
+      st.success("Audit Complete!")
+      st.markdown("---")
+      st.markdown(completion.choices[0].message.content)
+
+    except Exception as e:
+      st.error(f"Groq API Error: {e}")
