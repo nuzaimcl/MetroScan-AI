@@ -3,7 +3,6 @@ import re
 from groq import Groq
 import streamlit as st
 
-# Hide the header anchor link icon
 st.markdown(
     """
     <style>
@@ -71,25 +70,31 @@ if uploaded_images:
     with cols[idx % len(cols)]:
       st.image(img, use_container_width=True)
 
-# Strict prompt blocking filler text and mapping exact Rule 6 sub-clauses
-prompt = (
-    "You are a strict Legal Metrology compliance auditor. Analyze the provided"
-    " product label images against the Legal Metrology (Packaged Commodities)"
-    " Rules, 2011. Ignore placeholder text like 'Lorem ipsum' or dummy"
-    " content.\n\nOutput ONLY a clean, professional compliance report. Do NOT"
-    " include any conversational filler, thinking out loud, introductory"
-    " phrases, or sentences like 'Let me check' or 'Looking at the images'. Use"
-    " the exact structure below for each mandatory declaration:\n\n1. Name"
-    " [Rule 6(1)(b)] - Common/Generic Name: [Pass/Fail & Findings]\n2."
-    " Manufacturer [Rule 6(1)(a)] - Name & Address: [Pass/Fail & Findings]\n3."
-    " Net Quantity [Rule 6(1)(c)] - Weight/Measure: [Pass/Fail & Findings]\n4."
-    " MRP [Rule 6(1)(e)] - Retail Sale Price: [Pass/Fail & Findings]\n5."
-    " Month/Year of Packing [Rule 6(1)(d)] - Manufacturing Date: [Pass/Fail &"
-    " Findings]\n6. Customer Care [Rule 6(2)] - Consumer Details: [Pass/Fail &"
-    " Findings]\n7. Country of Origin [Rule 6(1)(aa)] - Origin Details:"
-    " [Pass/Fail & Findings]"
-)
 
+prompt = (
+    "You are an expert Legal Metrology compliance auditor. Perform a rigorous"
+    " audit of the provided product package images against Rule 6 of the Legal"
+    " Metrology (Packaged Commodities) Rules, 2011.\n\nCRITICAL RULES FOR"
+    " ACCURACY:\n- Do NOT confuse a green dot in a square with Country of Origin"
+    " (the green dot is a vegetarian symbol, NOT origin).\n- Do NOT accept a"
+    " random currency symbol like '₹10' as valid MRP unless it is explicitly"
+    " labeled with 'MRP' or 'Maximum Retail Price inclusive of all"
+    " taxes'.\n- Ignore placeholder text like 'Lorem ipsum' or dummy blocks as"
+    " Failures.\n\nOutput ONLY a professional audit report with explicit"
+    " [PASS] or [FAIL] status and clear, actionable changes required for"
+    " non-compliant items. Use this exact format for each of the 7"
+    " declarations:\n\n1. Name [Rule 6(1)(b)] - Common/Generic Name: [PASS or"
+    " FAIL] - Status & Required Changes:\n2. Manufacturer [Rule 6(1)(a)] - Name"
+    " & Complete Address: [PASS or FAIL] - Status & Required Changes:\n3. Net"
+    " Quantity [Rule 6(1)(c)] - Weight/Measure: [PASS or FAIL] - Status &"
+    " Required Changes:\n4. MRP [Rule 6(1)(e)] - Retail Sale Price inclusive of"
+    " taxes: [PASS or FAIL] - Status & Required Changes:\n5. Month/Year of"
+    " Packing [Rule 6(1)(d)] - Manufacturing Date: [PASS or FAIL] - Status &"
+    " Required Changes:\n6. Customer Care [Rule 6(2)] - Consumer Contact Details"
+    " (Email/Phone): [PASS or FAIL] - Status & Required Changes:\n7. Country of"
+    " Origin [Rule 6(1)(aa)] - Country of Manufacture: [PASS or FAIL] - Status"
+    " & Required Changes:"
+)
 if uploaded_images and st.button("Run Compliance Audit"):
   with st.spinner("Analyzing with Groq..."):
     content_payload = [{"type": "text", "text": prompt}]
@@ -112,7 +117,7 @@ if uploaded_images and st.button("Run Compliance Audit"):
 
       raw_output = completion.choices[0].message.content
 
-      # Clean out any hidden thinking blocks using regex
+      
       final_output = re.sub(
           r"<think>.*?</think>", "", raw_output, flags=re.DOTALL
       ).strip()
