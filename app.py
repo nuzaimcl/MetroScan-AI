@@ -97,8 +97,15 @@ if uploaded_images and st.button("Run Compliance Audit"):
       )
 
       raw_output = completion.choices[0].message.content
+
+      # Robust cleaning for reasoning tags to completely avoid printing <think> blocks
       if "</think>" in raw_output:
         final_output = raw_output.split("</think>")[-1].strip()
+      elif "<think>" in raw_output:
+        parts = raw_output.split("<think>")
+        final_output = parts[0].strip()
+        if len(parts) > 1 and "</think>" in parts[1]:
+          final_output += "\n" + parts[1].split("</think>")[-1].strip()
       else:
         final_output = raw_output
 
