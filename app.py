@@ -6,13 +6,20 @@ client = Groq(api_key=st.secrets["GROQ_API_KEY"])
 
 st.title("Metro-Scan AI (Groq Powered)")
 
-upload_option = st.radio(
-    "Choose Input Method", ("Upload Images", "Take Live Photos")
-)
+if "input_mode" not in st.session_state:
+  st.session_state.input_mode = "Upload Images"
+
+col1, col2 = st.columns(2)
+with col1:
+  if st.button("📁 Upload Images", use_container_width=True):
+    st.session_state.input_mode = "Upload Images"
+with col2:
+  if st.button("📸 Take Live Photos", use_container_width=True):
+    st.session_state.input_mode = "Take Live Photos"
 
 uploaded_images = []
 
-if upload_option == "Upload Images":
+if st.session_state.input_mode == "Upload Images":
   files = st.file_uploader(
       "Upload product label photos",
       type=["jpg", "jpeg", "png"],
@@ -29,7 +36,8 @@ else:
   if camera_file is not None:
     if (
         not st.session_state.live_photos
-        or st.session_state.live_photos[-1].getvalue() != camera_file.getvalue()
+        or st.session_state.live_photos[-1].getvalue()
+        != camera_file.getvalue()
     ):
       st.session_state.live_photos.append(camera_file)
       st.rerun()
@@ -43,8 +51,10 @@ else:
 
 if uploaded_images:
   st.subheader("Image Preview")
-  for img in uploaded_images:
-    st.image(img, width=300)
+  cols = st.columns(min(len(uploaded_images), 4))
+  for idx, img in enumerate(uploaded_images):
+    with cols[idx % len(cols)]:
+      st.image(img, use_container_width=True)
 
 prompt = (
     "Check these product images against Legal Metrology packaging rules (7"
