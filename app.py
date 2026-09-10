@@ -2,32 +2,41 @@ import base64
 from groq import Groq
 import streamlit as st
 
-# Initialize the Groq client using Streamlit secrets
 client = Groq(api_key=st.secrets["GROQ_API_KEY"])
 
-st.title("Metro-Scan AI (Powered by Groq)")
+st.title("Metro-Scan AI (Groq Powered)")
 
-# 1. Allow multiple image uploads
-uploaded_images = st.file_uploader(
-    "Upload product label photos (Front, Back, MRP panel, etc.)",
-    type=["jpg", "jpeg", "png"],
-    accept_multiple_files=True,
+# Give users a choice: Upload files OR take a live photo
+upload_option = st.radio(
+    "Choose Input Method", ("Upload Images", "Take Live Photo")
 )
 
-prompt = st.text_area(
-    "Analysis Prompt",
+uploaded_images = []
+
+if upload_option == "Upload Images":
+  files = st.file_uploader(
+      "Upload product label photos",
+      type=["jpg", "jpeg", "png"],
+      accept_multiple_files=True,
+  )
+  if files:
+    uploaded_images.extend(files)
+else:
+  camera_file = st.camera_input("Take a photo of the product label")
+  if camera_file:
+    uploaded_images.append(camera_file)
+
+# Hidden default prompt so judges don't have to look at text boxes
+prompt = (
     "Check these product images against Legal Metrology packaging rules (7"
-    " mandatory declarations).",
+    " mandatory declarations: Name, Manufacturer, Net Quantity, MRP, Month/Year"
+    " of packing, Customer Care, and Country of Origin)."
 )
 
 if uploaded_images and st.button("Run Compliance Audit"):
-  with st.spinner(
-      "Analyzing multiple angles with ultra-fast Groq inference..."
-  ):
-    # Build the message payload array
+  with st.spinner("Analyzing with Groq..."):
     content_payload = [{"type": "text", "text": prompt}]
 
-    # Loop through each uploaded image, encode to base64, and add to payload
     for img in uploaded_images:
       bytes_data = img.getvalue()
       base64_image = base64.b64encode(bytes_data).decode("utf-8")
@@ -37,16 +46,22 @@ if uploaded_images and st.button("Run Compliance Audit"):
       })
 
     try:
-      # Call Groq's high-speed vision model
       completion = client.chat.completions.create(
-          model="qwen/qwen3.6-27b",  # Groq's robust vision model
+          model="qwen/qwen3.6-27b",
           messages=[{"role": "user", "content": content_payload}],
           temperature=0.1,
       )
 
+      # Clean up the output to remove any <think> tags if they appear
+      raw_output = completion.choices[0].message.content
+      if "</think>" in raw_output:
+        final_output = raw_output.split("</think>")[-1].strip()
+      else:
+        final_output = raw_output
+
       st.success("Audit Complete!")
       st.markdown("---")
-      st.markdown(completion.choices[0].message.content)
+      st.markdown(final_output)
 
     except Exception as e:
       st.error(f"Groq API Error: {e}")
