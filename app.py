@@ -7,7 +7,7 @@ client = Groq(api_key=st.secrets["GROQ_API_KEY"])
 st.title("Metro-Scan AI (Groq Powered)")
 
 upload_option = st.radio(
-    "Choose Input Method", ("Upload Images", "Take Live Photo")
+    "Choose Input Method", ("Upload Images", "Take Live Photos")
 )
 
 uploaded_images = []
@@ -21,9 +21,25 @@ if upload_option == "Upload Images":
   if files:
     uploaded_images.extend(files)
 else:
+  if "live_photos" not in st.session_state:
+    st.session_state.live_photos = []
+
   camera_file = st.camera_input("Take a photo of the product label")
-  if camera_file:
-    uploaded_images.append(camera_file)
+
+  if camera_file is not None:
+    if (
+        not st.session_state.live_photos
+        or st.session_state.live_photos[-1].getvalue() != camera_file.getvalue()
+    ):
+      st.session_state.live_photos.append(camera_file)
+      st.rerun()
+
+  if st.session_state.live_photos:
+    st.write(f"Captured Live Photos: {len(st.session_state.live_photos)}")
+    if st.button("Clear Live Photos"):
+      st.session_state.live_photos = []
+      st.rerun()
+    uploaded_images.extend(st.session_state.live_photos)
 
 if uploaded_images:
   st.subheader("Image Preview")
