@@ -71,18 +71,23 @@ if uploaded_images:
     with cols[idx % len(cols)]:
       st.image(img, use_container_width=True)
 
+# Strict prompt blocking filler text and mapping exact Rule 6 sub-clauses
 prompt = (
-    "Analyze these product images for Legal Metrology compliance based on the 7"
-    " mandatory declarations. Ignore placeholder text like 'Lorem ipsum' or"
-    " dummy content. For each declaration, include the exact Legal Metrology"
-    " rule/section in brackets:\n1. Name (Rule 6 - Common/Generic Name of the"
-    " Commodity)\n2. Manufacturer (Rule 6 - Name and complete address of"
-    " manufacturer/packer/importer)\n3. Net Quantity (Rule 6 - Net quantity in"
-    " terms of standard weight/measure/number)\n4. MRP (Rule 6 - Maximum Retail"
-    " Price inclusive of all taxes)\n5. Month/Year of packing (Rule 6 -"
-    " Month and year of manufacture/packing/import)\n6. Customer Care (Rule 6"
-    " - Consumer care email/phone/address details)\n7. Country of Origin (Rule"
-    " 6/Customs - Country of origin of manufacture)"
+    "You are a strict Legal Metrology compliance auditor. Analyze the provided"
+    " product label images against the Legal Metrology (Packaged Commodities)"
+    " Rules, 2011. Ignore placeholder text like 'Lorem ipsum' or dummy"
+    " content.\n\nOutput ONLY a clean, professional compliance report. Do NOT"
+    " include any conversational filler, thinking out loud, introductory"
+    " phrases, or sentences like 'Let me check' or 'Looking at the images'. Use"
+    " the exact structure below for each mandatory declaration:\n\n1. Name"
+    " [Rule 6(1)(b)] - Common/Generic Name: [Pass/Fail & Findings]\n2."
+    " Manufacturer [Rule 6(1)(a)] - Name & Address: [Pass/Fail & Findings]\n3."
+    " Net Quantity [Rule 6(1)(c)] - Weight/Measure: [Pass/Fail & Findings]\n4."
+    " MRP [Rule 6(1)(e)] - Retail Sale Price: [Pass/Fail & Findings]\n5."
+    " Month/Year of Packing [Rule 6(1)(d)] - Manufacturing Date: [Pass/Fail &"
+    " Findings]\n6. Customer Care [Rule 6(2)] - Consumer Details: [Pass/Fail &"
+    " Findings]\n7. Country of Origin [Rule 6(1)(aa)] - Origin Details:"
+    " [Pass/Fail & Findings]"
 )
 
 if uploaded_images and st.button("Run Compliance Audit"):
@@ -102,19 +107,18 @@ if uploaded_images and st.button("Run Compliance Audit"):
           model="qwen/qwen3.6-27b",
           messages=[{"role": "user", "content": content_payload}],
           temperature=0.1,
-          max_tokens=2500,  # Increased token limit so it doesn't get cut off mid-thought
+          max_tokens=2500,
       )
 
       raw_output = completion.choices[0].message.content
 
-      # Handle both closed and unclosed/truncated think blocks
-      if "</think>" in raw_output:
-        final_output = raw_output.split("</think>")[-1].strip()
-      elif "<think>" in raw_output:
-        # If the think tag was never closed due to token limits, strip the tag and use the text anyway
-        final_output = raw_output.replace("<think>", "").strip()
-      else:
-        final_output = raw_output
+      # Clean out any hidden thinking blocks using regex
+      final_output = re.sub(
+          r"<think>.*?</think>", "", raw_output, flags=re.DOTALL
+      ).strip()
+
+      if not final_output and "<think>" in raw_output:
+        final_output = raw_output.split("<think>")[-1].strip()
 
       st.success("Audit Complete!")
       st.markdown("---")
