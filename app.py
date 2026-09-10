@@ -8,6 +8,12 @@ st.markdown(
     [data-testid="stHeaderActionElements"] {
         display: none;
     }
+    .custom-title {
+        font-size: 2.2rem;
+        font-weight: 700;
+        letter-spacing: 0.8px;
+        margin-bottom: 20px;
+    }
     </style>
 """,
     unsafe_allow_html=True,
@@ -15,9 +21,10 @@ st.markdown(
 
 client = Groq(api_key=st.secrets["GROQ_API_KEY"])
 
-st.title("Metro-Scan AI | Compliance Auditor")
-
-st.markdown("<br>", unsafe_allow_html=True)
+st.markdown(
+    '<h1 class="custom-title">Metro-Scan AI | Compliance Auditor</h1>',
+    unsafe_allow_html=True,
+)
 
 if "input_mode" not in st.session_state:
   st.session_state.input_mode = "Upload Images"
