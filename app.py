@@ -12,6 +12,7 @@ st.markdown(
         font-size: 1.8rem;
         font-weight: 700;
         margin-bottom: 15px;
+        padding-left: 0.5rem;
     }
     </style>
 """,
