@@ -4,7 +4,7 @@ import streamlit as st
 
 client = Groq(api_key=st.secrets["GROQ_API_KEY"])
 
-st.title("Metro-Scan AI (Groq Powered)")
+st.title("Metro-Scan AI | Legal Metrology Compliance Auditor")
 
 if "input_mode" not in st.session_state:
   st.session_state.input_mode = "Upload Images"
