@@ -6,7 +6,6 @@ client = Groq(api_key=st.secrets["GROQ_API_KEY"])
 
 st.title("Metro-Scan AI (Groq Powered)")
 
-
 upload_option = st.radio(
     "Choose Input Method", ("Upload Images", "Take Live Photo")
 )
@@ -45,13 +44,13 @@ if uploaded_images and st.button("Run Compliance Audit"):
       })
 
     try:
-     completion = client.chat.completions.create(
+      completion = client.chat.completions.create(
           model="qwen/qwen3.6-27b",
           messages=[{"role": "user", "content": content_payload}],
           temperature=0.1,
           max_tokens=800,
       )
-        
+
       raw_output = completion.choices[0].message.content
       if "</think>" in raw_output:
         final_output = raw_output.split("</think>")[-1].strip()
