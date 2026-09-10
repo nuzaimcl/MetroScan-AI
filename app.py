@@ -70,10 +70,19 @@ if uploaded_images:
     with cols[idx % len(cols)]:
       st.image(img, use_container_width=True)
 
+# Updated prompt to include legal rules in brackets and ignore dummy/lorem ipsum text
 prompt = (
-    "Check these product images against Legal Metrology packaging rules (7"
-    " mandatory declarations: Name, Manufacturer, Net Quantity, MRP, Month/Year"
-    " of packing, Customer Care, and Country of Origin)."
+    "Analyze these product images for Legal Metrology compliance based on the 7"
+    " mandatory declarations. Ignore placeholder text like 'Lorem ipsum' or"
+    " dummy content. For each declaration, include the exact Legal Metrology"
+    " rule/section in brackets:\n1. Name (Rule 6 - Common/Generic Name of the"
+    " Commodity)\n2. Manufacturer (Rule 6 - Name and complete address of"
+    " manufacturer/packer/importer)\n3. Net Quantity (Rule 6 - Net quantity in"
+    " terms of standard weight/measure/number)\n4. MRP (Rule 6 - Maximum Retail"
+    " Price inclusive of all taxes)\n5. Month/Year of packing (Rule 6 -"
+    " Month and year of manufacture/packing/import)\n6. Customer Care (Rule 6"
+    " - Consumer care email/phone/address details)\n7. Country of Origin (Rule"
+    " 6/Customs - Country of origin of manufacture)"
 )
 
 if uploaded_images and st.button("Run Compliance Audit"):
@@ -98,15 +107,19 @@ if uploaded_images and st.button("Run Compliance Audit"):
 
       raw_output = completion.choices[0].message.content
 
-      # Robust cleaning: if it's trapped in think tags, extract it or fallback
+      # Aggressive cleaner to completely strip thinking tags and internal reasoning text
       if "</think>" in raw_output:
-        parts = raw_output.split("</think>")
-        final_output = parts[-1].strip()
-        if not final_output and len(parts) > 1:
-          # Fallback if text was inside the think block
-          final_output = parts[0].replace("<think>", "").strip()
+        final_output = raw_output.split("</think>")[-1].strip()
       else:
         final_output = raw_output
+
+      # Safety backup check if the whole output was trapped inside think tags
+      if not final_output and "<think>" in raw_output:
+        final_output = (
+            raw_output.replace("<think>", "")
+            .replace("</think>", "")
+            .strip()
+        )
 
       st.success("Audit Complete!")
       st.markdown("---")
