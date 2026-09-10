@@ -71,30 +71,32 @@ if uploaded_images:
     with cols[idx % len(cols)]:
       st.image(img, use_container_width=True)
 
-# Strict compliance prompt with exact validation guidelines
+
 prompt = (
-    "You are an expert Legal Metrology compliance auditor. Perform a rigorous"
-    " audit of the provided product package images against Rule 6 of the Legal"
-    " Metrology (Packaged Commodities) Rules, 2011.\n\nCRITICAL EVALUATION"
-    " RULES:\n1. Do NOT accept a green dot inside a square as Country of Origin"
-    " (the green dot is a vegetarian symbol, NOT origin text).\n2. Do NOT"
-    " accept a random currency value like '₹10' as valid MRP unless it is"
+    "You are an expert Legal Metrology compliance auditor. You have been"
+    " provided with multiple images showing different sides and angles of the"
+    " **exact same single product package**. Analyze all uploaded images"
+    " together as a single unified set. If a mandatory declaration is visible"
+    " on *any* of the images, consider it present for the package.\n\nCRITICAL"
+    " EVALUATION RULES:\n1. Do NOT accept a green dot inside a square as Country"
+    " of Origin (the green dot is a vegetarian symbol, NOT origin text).\n2. Do"
+    " NOT accept a random currency value like '₹10' as valid MRP unless it is"
     " explicitly labeled with 'MRP' or 'Maximum Retail Price inclusive of all"
     " taxes'.\n3. Treat placeholder text like 'Lorem ipsum' or dummy blocks"
-    " strictly as [FAIL].\n\nOutput ONLY a professional audit report with"
-    " explicit [PASS] or [FAIL] status and clear, actionable changes required"
-    " for non-compliant items. Use this exact format for each of the 7"
-    " declarations:\n\n1. Name [Rule 6(1)(b)] - Common/Generic Name: [PASS or"
-    " FAIL] - Status & Required Changes:\n2. Manufacturer [Rule 6(1)(a)] - Name"
-    " & Complete Address: [PASS or FAIL] - Status & Required Changes:\n3. Net"
-    " Quantity [Rule 6(1)(c)] - Weight/Measure: [PASS or FAIL] - Status &"
-    " Required Changes:\n4. MRP [Rule 6(1)(e)] - Retail Sale Price inclusive of"
-    " taxes: [PASS or FAIL] - Status & Required Changes:\n5. Month/Year of"
-    " Packing [Rule 6(1)(d)] - Manufacturing Date: [PASS or FAIL] - Status &"
-    " Required Changes:\n6. Customer Care [Rule 6(2)] - Consumer Contact Details"
-    " (Email/Phone): [PASS or FAIL] - Status & Required Changes:\n7. Country of"
-    " Origin [Rule 6(1)(aa)] - Country of Manufacture: [PASS or FAIL] - Status"
-    " & Required Changes:"
+    " strictly as [FAIL].\n\nOutput ONLY a single, cohesive professional audit"
+    " report combining findings across all images, with explicit [PASS] or"
+    " [FAIL] status and clear, actionable changes required for non-compliant"
+    " items. Use this exact format for each of the 7 declarations:\n\n1. Name"
+    " [Rule 6(1)(b)] - Common/Generic Name: [PASS or FAIL] - Status & Required"
+    " Changes:\n2. Manufacturer [Rule 6(1)(a)] - Name & Complete Address: [PASS"
+    " or FAIL] - Status & Required Changes:\n3. Net Quantity [Rule 6(1)(c)] -"
+    " Weight/Measure: [PASS or FAIL] - Status & Required Changes:\n4. MRP [Rule"
+    " 6(1)(e)] - Retail Sale Price inclusive of taxes: [PASS or FAIL] - Status &"
+    " Required Changes:\n5. Month/Year of Packing [Rule 6(1)(d)] - Manufacturing"
+    " Date: [PASS or FAIL] - Status & Required Changes:\n6. Customer Care [Rule"
+    " 6(2)] - Consumer Contact Details (Email/Phone): [PASS or FAIL] - Status &"
+    " Required Changes:\n7. Country of Origin [Rule 6(1)(aa)] - Country of"
+    " Manufacture: [PASS or FAIL] - Status & Required Changes:"
 )
 
 if uploaded_images and st.button("Run Compliance Audit"):
