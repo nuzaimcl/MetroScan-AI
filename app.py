@@ -2,20 +2,12 @@ import base64
 from groq import Groq
 import streamlit as st
 
+# Hide the header anchor link icon
 st.markdown(
     """
     <style>
     [data-testid="stHeaderActionElements"] {
         display: none;
-    }
-    .main-title {
-        font-size: 1.8rem;
-        font-weight: 700;
-        margin-bottom: 15px;
-    }
-    .block-container {
-        padding-left: 3rem;
-        padding-right: 3rem;
     }
     </style>
 """,
@@ -24,10 +16,9 @@ st.markdown(
 
 client = Groq(api_key=st.secrets["GROQ_API_KEY"])
 
-st.markdown(
-    '<div class="main-title">Metro-Scan AI | Compliance Auditor</div>',
-    unsafe_allow_html=True,
-)
+st.title("Metro-Scan AI | Compliance Auditor")
+
+st.markdown("<br>", unsafe_allow_html=True)
 
 if "input_mode" not in st.session_state:
   st.session_state.input_mode = "Upload Images"
