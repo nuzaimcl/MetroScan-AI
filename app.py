@@ -1,4 +1,5 @@
 import base64
+import re
 from groq import Groq
 import streamlit as st
 
@@ -70,7 +71,6 @@ if uploaded_images:
     with cols[idx % len(cols)]:
       st.image(img, use_container_width=True)
 
-# Updated prompt to include legal rules in brackets and ignore dummy/lorem ipsum text
 prompt = (
     "Analyze these product images for Legal Metrology compliance based on the 7"
     " mandatory declarations. Ignore placeholder text like 'Lorem ipsum' or"
@@ -102,28 +102,23 @@ if uploaded_images and st.button("Run Compliance Audit"):
           model="qwen/qwen3.6-27b",
           messages=[{"role": "user", "content": content_payload}],
           temperature=0.1,
-          max_tokens=800,
+          max_tokens=2500,  # Increased token limit so it doesn't get cut off mid-thought
       )
 
       raw_output = completion.choices[0].message.content
 
-      # Aggressive cleaner to completely strip thinking tags and internal reasoning text
-      if "</think>" in raw_output:
-        final_output = raw_output.split("</think>")[-1].strip()
-      else:
-        final_output = raw_output
+      # Clean out thinking blocks cleanly using regex
+      final_output = re.sub(
+          r"<think>.*?</think>", "", raw_output, flags=re.DOTALL
+      ).strip()
 
-      # Safety backup check if the whole output was trapped inside think tags
+      # Fallback if the tag wasn't closed due to truncation
       if not final_output and "<think>" in raw_output:
-        final_output = (
-            raw_output.replace("<think>", "")
-            .replace("</think>", "")
-            .strip()
-        )
+        final_output = raw_output.split("<think>")[-1].strip()
 
       st.success("Audit Complete!")
       st.markdown("---")
-      st.markdown(final_output)
+      st.markdown(final_output if final_output else raw_output)
 
     except Exception as e:
       st.error(f"Groq API Error: {e}")
