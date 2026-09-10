@@ -8,11 +8,10 @@ st.markdown(
     [data-testid="stHeaderActionElements"] {
         display: none;
     }
-    .custom-title {
-        font-size: 2.2rem;
+    .main-title {
+        font-size: 1.8rem;
         font-weight: 700;
-        letter-spacing: 0.8px;
-        margin-bottom: 20px;
+        margin-bottom: 15px;
     }
     </style>
 """,
@@ -22,7 +21,7 @@ st.markdown(
 client = Groq(api_key=st.secrets["GROQ_API_KEY"])
 
 st.markdown(
-    '<h1 class="custom-title">Metro-Scan AI | Compliance Auditor</h1>',
+    '<div class="main-title">Metro-Scan AI | Compliance Auditor</div>',
     unsafe_allow_html=True,
 )
 
