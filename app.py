@@ -25,6 +25,11 @@ else:
   if camera_file:
     uploaded_images.append(camera_file)
 
+if uploaded_images:
+  st.subheader("Image Preview")
+  for img in uploaded_images:
+    st.image(img, width=300)
+
 prompt = (
     "Check these product images against Legal Metrology packaging rules (7"
     " mandatory declarations: Name, Manufacturer, Net Quantity, MRP, Month/Year"
